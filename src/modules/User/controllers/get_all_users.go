@@ -7,19 +7,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type FindAllUserController struct {
-	usecase *usecases.FindAllUser
+type GetAllUsersController struct {
+	usecase *usecases.GetAllUsers
 	result  *r.Result
 }
 
-func NewFindAllUserController(usecase *usecases.FindAllUser, r *r.Result) *FindAllUserController {
-	return &FindAllUserController{
+func NewGetAllUsersController(usecase *usecases.GetAllUsers, r *r.Result) *GetAllUsersController {
+	return &GetAllUsersController{
 		usecase: usecase,
 		result:  r,
 	}
 }
 
-func (ph *FindAllUserController) Run(c *fiber.Ctx) (err error) {
+func (ph *GetAllUsersController) Run(c *fiber.Ctx) (err error) {
 	var user entities.User
 
 	ph.result.Ok(c, user)
