@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	types "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/types"
+	dao "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/infrastructure/db/dao"
 	controllers "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/controllers"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/usecases"
 
@@ -11,7 +12,7 @@ import (
 )
 
 func configureModuleRoutes(
-	ctrlFindAllUsers *controllers.FindAllUserController,
+	ctrlGetAllUsers *controllers.GetAllUsersController,
 	h *types.HandlersStore,
 ) {
 
@@ -21,7 +22,7 @@ func configureModuleRoutes(
 			{
 				Route:   "/",
 				Method:  http.MethodGet,
-				Handler: ctrlFindAllUsers.Run,
+				Handler: ctrlGetAllUsers.Run,
 			},
 		},
 	}
@@ -31,9 +32,9 @@ func configureModuleRoutes(
 
 func ModuleProviders() []fx.Option {
 	return []fx.Option{
-
-		fx.Provide(usecases.NewUserUseCase),
-		fx.Provide(controllers.NewFindAllUserController),
+		fx.Provide(dao.NewMySQLUserDao),
+		fx.Provide(usecases.NewGetAllUsers),
+		fx.Provide(controllers.NewGetAllUsersController),
 
 		fx.Invoke(configureModuleRoutes),
 	}
