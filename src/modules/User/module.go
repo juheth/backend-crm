@@ -13,6 +13,8 @@ import (
 
 func configureModuleRoutes(
 	ctrlGetAllUsers *controllers.GetAllUsersController,
+	ctrlGetUserById *controllers.GetUserByIdController,
+
 	h *types.HandlersStore,
 ) {
 
@@ -24,9 +26,13 @@ func configureModuleRoutes(
 				Method:  http.MethodGet,
 				Handler: ctrlGetAllUsers.Run,
 			},
+			{
+				Route:   "/:id",
+				Method:  http.MethodGet,
+				Handler: ctrlGetUserById.Run,
+			},
 		},
 	}
-
 	h.Handlers = append(h.Handlers, *handlersModuleUsers)
 }
 
@@ -35,6 +41,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(dao.NewMySQLUserDao),
 		fx.Provide(controllers.NewGetAllUsersController),
 		fx.Provide(usecases.NewGetAllUsers),
+		fx.Provide(controllers.NewGetUserByIdController),
+		fx.Provide(usecases.NewGetUserById),
 
 		fx.Invoke(configureModuleRoutes),
 	}

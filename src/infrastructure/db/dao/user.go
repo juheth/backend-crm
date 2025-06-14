@@ -21,3 +21,11 @@ func (dao *MySQLUserDao) GetAllUsers(page, limit int) ([]entities.User, error) {
 	}
 	return users, nil
 }
+
+func (dao *MySQLUserDao) GetUserById(id int) (entities.User, error) {
+	var user entities.User
+	if err := dao.db.First(&user, id).Error; err != nil {
+		return entities.User{}, err
+	}
+	return user, nil
+}
