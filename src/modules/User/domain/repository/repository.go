@@ -4,4 +4,5 @@ import entities "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/mo
 
 type UserRepository interface {
 	GetAllUsers(page, limit int) ([]entities.User, error)
+	GetUserById(id int) (entities.User, error)
 }
