@@ -1,15 +1,16 @@
 package usecases
 
 import (
+	dao "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/infrastructure/db/dao"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/domain/entities"
-	repository "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/domain/repository"
+	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/domain/repository"
 )
 
 type GetAllUsers struct {
 	repo repository.UserRepository
 }
 
-func NewGetAllUsers(repo repository.UserRepository) *GetAllUsers {
+func NewGetAllUsers(repo *dao.MySQLUserDao) *GetAllUsers {
 	return &GetAllUsers{
 		repo: repo,
 	}

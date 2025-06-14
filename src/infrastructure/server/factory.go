@@ -1,13 +1,10 @@
-package infrastructure
+package infraestructure
 
 import (
-	"github.com/juheth/Go-Clean-Arquitecture/src/common/auth"
-	config "github.com/juheth/Go-Clean-Arquitecture/src/common/config"
-	result "github.com/juheth/Go-Clean-Arquitecture/src/common/response"
-	types "github.com/juheth/Go-Clean-Arquitecture/src/common/types"
-	db "github.com/juheth/Go-Clean-Arquitecture/src/infrastructure/db/adapter"
-
-	"github.com/juheth/Go-Clean-Arquitecture/src/modules/users"
+	config "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/config"
+	result "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/response"
+	types "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/types"
+	db "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/infrastructure/db/adapter"
 
 	"go.uber.org/fx"
 )
@@ -22,19 +19,8 @@ func (ps *ProvidersStore) Init() {
 		fx.Provide(result.NewResult),
 		fx.Provide(config.NewConfig),
 		fx.Provide(db.NewDBConnection),
-
-		fx.Provide(func(cfg *config.Config) *auth.JWT {
-			if cfg.App.SecretKey == "" {
-				panic("JWT secret key no configurada")
-			}
-			return auth.NewJWT(cfg.App.SecretKey)
-		}),
 	}
-
-	ps.AddModule(users.ModuleProviders())
-
 }
-
 func (ps *ProvidersStore) AddModule(p []fx.Option) {
 	ps.Providers = append(ps.Providers, p...)
 }

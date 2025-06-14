@@ -1,57 +1,64 @@
-package auth
+package common
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-type JWT struct {
-	SecretKey string
-}
-
-func NewJWT(secretKey string) *JWT {
-	return &JWT{SecretKey: secretKey}
-}
+var secretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
 
 type Claims struct {
-	ID    int    `json:"id"`
-	Email string `json:"email"`
+	ID int `json:"id"`
 	jwt.StandardClaims
 }
 
-func (s *JWT) GenerateToken(id int, email string) (string, error) {
-	claims := Claims{
-		ID:    id,
-		Email: email,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
-			Issuer:    "myApp",
-		},
-	}
+func GenerateToken(userID int) (string, error) {
+	claims := jwt.MapClaims{}
+	claims["id"] = userID
+	claims["exp"] = time.Now().Add(time.Hour * 72).Unix() // Expira en 72 horas
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(s.SecretKey))
+	return token.SignedString(secretKey)
 }
 
-func (s *JWT) ValidateToken(tokenStr string) (*Claims, error) {
-	token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(s.SecretKey), nil
+func ValidateToken(tokenString string) (*Claims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return secretKey, nil
 	})
 
-	if err != nil || !token.Valid {
-		return nil, fmt.Errorf("token inválido")
+	if err != nil {
+		return nil, err
 	}
 
+	// Asegurarse de que el token es válido y retornar los claims correctos
+	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+		return claims, nil
+	}
+	return nil, fmt.Errorf("token inválido")
+}
+
+func RefreshToken(tokenString string) (string, int, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return secretKey, nil
+	})
+
+	if err != nil {
+		return "", 0, fmt.Errorf("token inválido: %v", err)
+	}
 	claims, ok := token.Claims.(*Claims)
-	if !ok {
-		return nil, fmt.Errorf("error al parsear los claims")
+	if !ok || !token.Valid {
+		return "", 0, fmt.Errorf("token inválido o claims inválidos")
 	}
 
-	if claims.ExpiresAt < time.Now().Unix() {
-		return nil, fmt.Errorf("token expirado")
-	}
+	userID := claims.ID
 
-	return claims, nil
+	expiration := claims.ExpiresAt
+	if time.Until(time.Unix(expiration, 0)) < time.Hour*24 {
+		newToken, err := GenerateToken(userID)
+		return newToken, userID, err
+	}
+	return tokenString, userID, nil
 }

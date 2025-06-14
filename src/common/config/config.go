@@ -42,7 +42,7 @@ func NewConfig() *Config {
 		&ConfigDB{
 			Host:     os.Getenv("DB_HOST"),
 			Password: os.Getenv("DB_PASSWORD"),
-			Username: os.Getenv("DB_USER"),
+			Username: os.Getenv("DB_USER_NAME"),
 			Charset:  os.Getenv("DB_CHARSET"),
 			Dbname:   os.Getenv("DB_NAME"),
 			Port:     os.Getenv("DB_PORT"),

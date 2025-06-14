@@ -14,6 +14,8 @@ type DBConnection struct {
 }
 
 func NewDBConnection(cfg *config.Config) *DBConnection {
+	fmt.Println(cfg.DB.Username, cfg.DB.Password, cfg.DB.Host, cfg.DB.Port, cfg.DB.Dbname)
+
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.DB.Username,
 		cfg.DB.Password,
@@ -22,6 +24,7 @@ func NewDBConnection(cfg *config.Config) *DBConnection {
 		cfg.DB.Dbname,
 	)
 
+	fmt.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Error to connect database : %s", err)

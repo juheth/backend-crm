@@ -33,8 +33,8 @@ func configureModuleRoutes(
 func ModuleProviders() []fx.Option {
 	return []fx.Option{
 		fx.Provide(dao.NewMySQLUserDao),
-		fx.Provide(usecases.NewGetAllUsers),
 		fx.Provide(controllers.NewGetAllUsersController),
+		fx.Provide(usecases.NewGetAllUsers),
 
 		fx.Invoke(configureModuleRoutes),
 	}

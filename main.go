@@ -1,8 +1,8 @@
 package main
 
 import (
+	server "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/infrastructure/server"
 	user "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User"
-	server "github.com/juheth/Go-Clean-Arquitecture/src/infrastructure/server"
 )
 
 func main() {
