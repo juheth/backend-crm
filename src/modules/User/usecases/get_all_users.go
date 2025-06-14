@@ -16,7 +16,7 @@ func NewGetAllUsers(repo *dao.MySQLUserDao) *GetAllUsers {
 	}
 }
 
-func (u *GetAllUsers) GetAllUsers() ([]entities.User, error) {
+func (u *GetAllUsers) Execute() ([]entities.User, error) {
 	users, err := u.repo.GetAllUsers(1, 10)
 	return users, err
 }

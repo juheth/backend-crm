@@ -16,7 +16,7 @@ func NewGetUserById(repo *dao.MySQLUserDao) *GetUserById {
 	}
 }
 
-func (u *GetUserById) GetUserById(id int) (entities.User, error) {
+func (u *GetUserById) Execute(id int) (entities.User, error) {
 	user, err := u.repo.GetUserById(id)
 	return user, err
 }
