@@ -16,7 +16,8 @@ func NewMySQLUserDao(connection *db.DBConnection) *MySQLUserDao {
 
 func (dao *MySQLUserDao) GetAllUsers(page, limit int) ([]entities.User, error) {
 	var users []entities.User
-	if err := dao.db.Limit(limit).Offset((page - 1) * limit).Find(&users).Error; err != nil {
+	offset := (page - 1) * limit
+	if err := dao.db.Limit(limit).Offset(offset).Find(&users).Error; err != nil {
 		return nil, err
 	}
 	return users, nil
@@ -28,4 +29,14 @@ func (dao *MySQLUserDao) GetUserById(id int) (entities.User, error) {
 		return entities.User{}, err
 	}
 	return user, nil
+}
+
+func (dao *MySQLUserDao) CreateUser(user *entities.User) error {
+	return dao.db.Create(user).Error
+}
+
+func (dao *MySQLUserDao) UpdateUser(user *entities.User) error {
+	return dao.db.Model(&entities.User{}).
+		Where("id = ?", user.ID).
+		Updates(user).Error
 }

@@ -14,6 +14,8 @@ import (
 func configureModuleRoutes(
 	ctrlGetAllUsers *controllers.GetAllUsersController,
 	ctrlGetUserById *controllers.GetUserByIdController,
+	ctrlCrearUser *controllers.CreateUsersController,
+	ctrlUpdateUser *controllers.UpdateUserController,
 
 	h *types.HandlersStore,
 ) {
@@ -22,7 +24,7 @@ func configureModuleRoutes(
 		Prefix: "users",
 		Routes: []types.HandlerModule{
 			{
-				Route:   "/",
+				Route:   "/all",
 				Method:  http.MethodGet,
 				Handler: ctrlGetAllUsers.Run,
 			},
@@ -30,6 +32,16 @@ func configureModuleRoutes(
 				Route:   "/:id",
 				Method:  http.MethodGet,
 				Handler: ctrlGetUserById.Run,
+			},
+			{
+				Route:   "/create",
+				Method:  http.MethodPost,
+				Handler: ctrlCrearUser.Run,
+			},
+			{
+				Route:   "/update/:id",
+				Method:  http.MethodPut,
+				Handler: ctrlUpdateUser.Run,
 			},
 		},
 	}
@@ -43,6 +55,10 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(usecases.NewGetAllUsers),
 		fx.Provide(controllers.NewGetUserByIdController),
 		fx.Provide(usecases.NewGetUserById),
+		fx.Provide(controllers.NewCreateUsersController),
+		fx.Provide(usecases.NewCreateUsers),
+		fx.Provide(controllers.NewUpdateUserController),
+		fx.Provide(usecases.NewUpdateUser),
 
 		fx.Invoke(configureModuleRoutes),
 	}

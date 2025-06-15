@@ -18,8 +18,10 @@ func NewGetAllUsersController(usecase *usecases.GetAllUsers, r *r.Result) *GetAl
 	}
 }
 
-func (ph *GetAllUsersController) Run(c *fiber.Ctx) (err error) {
-
-	ph.result.Ok(c, "Hello World")
-	return
+func (ph *GetAllUsersController) Run(c *fiber.Ctx) error {
+	users, err := ph.usecase.Execute()
+	if err != nil {
+		return ph.result.Error(c, err)
+	}
+	return ph.result.Ok(c, users)
 }
