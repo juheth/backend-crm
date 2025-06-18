@@ -74,6 +74,7 @@ func NewHttpFiberServer(lc fx.Lifecycle, h *types.HandlersStore, cfg *config.Con
 	})
 
 	app.Use(cors.New())
+
 	app.Use(logger.New())
 
 	app.Get("/health", func(c *fiber.Ctx) error {

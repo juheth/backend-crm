@@ -8,32 +8,38 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-var secretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
+func getSecretKey() []byte {
+	return []byte(os.Getenv("JWT_SECRET_KEY"))
+}
 
 type Claims struct {
-	ID int `json:"id"`
+	ID    int    `json:"id"`
+	Email string `json:"email"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(userID int) (string, error) {
-	claims := jwt.MapClaims{}
-	claims["id"] = userID
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix() // Expira en 72 horas
+func GenerateToken(userID int, email string) (string, error) {
+	claims := Claims{
+		ID:    userID,
+		Email: email,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+		},
+	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(secretKey)
+	return token.SignedString(getSecretKey())
 }
 
 func ValidateToken(tokenString string) (*Claims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return secretKey, nil
+		return getSecretKey(), nil
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	// Asegurarse de que el token es válido y retornar los claims correctos
 	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
 		return claims, nil
 	}
@@ -42,12 +48,13 @@ func ValidateToken(tokenString string) (*Claims, error) {
 
 func RefreshToken(tokenString string) (string, int, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return secretKey, nil
+		return getSecretKey(), nil
 	})
 
 	if err != nil {
 		return "", 0, fmt.Errorf("token inválido: %v", err)
 	}
+
 	claims, ok := token.Claims.(*Claims)
 	if !ok || !token.Valid {
 		return "", 0, fmt.Errorf("token inválido o claims inválidos")
@@ -57,8 +64,9 @@ func RefreshToken(tokenString string) (string, int, error) {
 
 	expiration := claims.ExpiresAt
 	if time.Until(time.Unix(expiration, 0)) < time.Hour*24 {
-		newToken, err := GenerateToken(userID)
+		newToken, err := GenerateToken(userID, claims.Email)
 		return newToken, userID, err
 	}
+
 	return tokenString, userID, nil
 }

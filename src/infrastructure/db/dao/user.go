@@ -40,3 +40,11 @@ func (dao *MySQLUserDao) UpdateUser(user *entities.User) error {
 		Where("id = ?", user.ID).
 		Updates(user).Error
 }
+
+func (dao *MySQLUserDao) FindByEmail(email string) (entities.User, error) {
+	var user entities.User
+	if err := dao.db.Where("email = ?", email).First(&user).Error; err != nil {
+		return entities.User{}, err
+	}
+	return user, nil
+}

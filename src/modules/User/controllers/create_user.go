@@ -26,12 +26,24 @@ func (ph *CreateUsersController) Run(c *fiber.Ctx) error {
 		return ph.result.Bad(c, "Error al parsear el cuerpo de la solicitud")
 	}
 
-	if err := ph.usecase.Execute(&user); err != nil {
-		return ph.result.Error(c, err)
+	if user.Name == "" {
+		return ph.result.Bad(c, "El nombre es obligatorio")
 	}
 
-	if user.Name == "" || user.Email == "" {
-		return ph.result.Bad(c, "El nombre y el correo electrónico son obligatorios")
+	if user.Email == "" {
+		return ph.result.Bad(c, "El email es obligatorio")
+	}
+
+	if user.Password == "" {
+		return ph.result.Bad(c, "La contraseña es obligatoria")
+	}
+
+	if len(user.Password) < 6 {
+		return ph.result.Bad(c, "La contraseña debe tener al menos 6 caracteres")
+	}
+
+	if err := ph.usecase.Execute(&user); err != nil {
+		return ph.result.Error(c, err)
 	}
 
 	return ph.result.Ok(c, "Usuario creado exitosamente")

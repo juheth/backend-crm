@@ -16,6 +16,8 @@ func configureModuleRoutes(
 	ctrlGetUserById *controllers.GetUserByIdController,
 	ctrlCrearUser *controllers.CreateUsersController,
 	ctrlUpdateUser *controllers.UpdateUserController,
+	ctrlLoginUser *controllers.LoginUserController,
+	ctrlRefreshToken *controllers.RefreshTokenController,
 
 	h *types.HandlersStore,
 ) {
@@ -24,24 +26,38 @@ func configureModuleRoutes(
 		Prefix: "users",
 		Routes: []types.HandlerModule{
 			{
-				Route:   "/all",
-				Method:  http.MethodGet,
-				Handler: ctrlGetAllUsers.Run,
+				Route:        "/",
+				Method:       http.MethodGet,
+				Handler:      ctrlGetAllUsers.Run,
+				RequiresAuth: true,
 			},
 			{
-				Route:   "/:id",
-				Method:  http.MethodGet,
-				Handler: ctrlGetUserById.Run,
+				Route:        "/:id",
+				Method:       http.MethodGet,
+				Handler:      ctrlGetUserById.Run,
+				RequiresAuth: true,
 			},
 			{
-				Route:   "/create",
+				Route:        "/create",
+				Method:       http.MethodPost,
+				Handler:      ctrlCrearUser.Run,
+				RequiresAuth: false,
+			},
+			{
+				Route:        "/update/:id",
+				Method:       http.MethodPut,
+				Handler:      ctrlUpdateUser.Run,
+				RequiresAuth: true,
+			},
+			{
+				Route:   "/login",
 				Method:  http.MethodPost,
-				Handler: ctrlCrearUser.Run,
+				Handler: ctrlLoginUser.Run,
 			},
 			{
-				Route:   "/update/:id",
-				Method:  http.MethodPut,
-				Handler: ctrlUpdateUser.Run,
+				Route:   "/refresh-token",
+				Method:  http.MethodPost,
+				Handler: ctrlRefreshToken.Run,
 			},
 		},
 	}
@@ -59,6 +75,9 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(usecases.NewCreateUsers),
 		fx.Provide(controllers.NewUpdateUserController),
 		fx.Provide(usecases.NewUpdateUser),
+		fx.Provide(controllers.NewLoginUserController),
+		fx.Provide(usecases.NewLoginUser),
+		fx.Provide(controllers.NewRefreshTokenController),
 
 		fx.Invoke(configureModuleRoutes),
 	}
