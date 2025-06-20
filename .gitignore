@@ -1,1 +1,6 @@
 .env
+.gitignore
+get_all_clients.go
+get_client_by_id.go
+update_client.go
+get_client_by_id.go
