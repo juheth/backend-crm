@@ -1,7 +1,7 @@
 package dto
 
-type UserDTO struct {
-	ID    int    `json:"id"`
+type UpdateClientRequestDTO struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
+	Phone string `json:"phone"`
 }

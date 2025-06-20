@@ -37,7 +37,7 @@ func NewConfig() *Config {
 	return &Config{
 		&ConfigApp{
 			Port:      os.Getenv("HTTP_PORT"),
-			SecretKey: os.Getenv("JWT_SECRET"),
+			SecretKey: os.Getenv("JWT_SECRET_KEY"),
 		},
 		&ConfigDB{
 			Host:     os.Getenv("DB_HOST"),
