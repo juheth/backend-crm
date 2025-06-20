@@ -1,4 +1,4 @@
-package infrastructure
+package infraestructure
 
 import (
 	"context"
@@ -6,41 +6,57 @@ import (
 	"fmt"
 	"net/http"
 
-	config "github.com/juheth/Go-Clean-Arquitecture/src/common/config"
-	types "github.com/juheth/Go-Clean-Arquitecture/src/common/types"
+	config "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/config"
+	types "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/types"
+	middleware "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/infrastructure/http"
+	"go.uber.org/fx"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"go.uber.org/fx"
 )
 
 func setRoutesByModule(app *fiber.App, h *types.HandlersStore) {
-	log.Infof("Total modules registered: %d", len(h.Handlers))
-	for i, module := range h.Handlers {
-		log.Infof("Module %d: Prefix '%s' with %d routes", i+1, module.Prefix, len(module.Routes))
-	}
 	for _, handlerModule := range h.Handlers {
 		route := app.Group("/" + handlerModule.Prefix)
+		app.Static("/downloads", "./uploads")
 		for _, routeItem := range handlerModule.Routes {
-			log.Infof("%v %v%v", routeItem.Method, handlerModule.Prefix, routeItem.Route)
-			if routeItem.Method == http.MethodGet {
-				route.Get(routeItem.Route, routeItem.Handler)
-			}
-			if routeItem.Method == http.MethodPost {
-				route.Post(routeItem.Route, routeItem.Handler)
-			}
-			if routeItem.Method == http.MethodPut {
-				route.Put(routeItem.Route, routeItem.Handler)
-			}
-			if routeItem.Method == http.MethodDelete {
-				route.Delete(routeItem.Route, routeItem.Handler)
+			// Configurar la ruta específica
+			switch routeItem.Method {
+			case http.MethodGet:
+				if routeItem.RequiresAuth {
+					route.Get(routeItem.Route, middleware.JWTMiddleware, routeItem.Handler)
+				} else {
+					route.Get(routeItem.Route, routeItem.Handler)
+				}
+			case http.MethodPost:
+				if routeItem.RequiresAuth {
+					route.Post(routeItem.Route, middleware.JWTMiddleware, routeItem.Handler)
+				} else {
+					route.Post(routeItem.Route, routeItem.Handler)
+				}
+			case http.MethodPut:
+				if routeItem.RequiresAuth {
+					route.Put(routeItem.Route, middleware.JWTMiddleware, routeItem.Handler)
+				} else {
+					route.Put(routeItem.Route, routeItem.Handler)
+				}
+			case http.MethodDelete:
+				if routeItem.RequiresAuth {
+					route.Delete(routeItem.Route, middleware.JWTMiddleware, routeItem.Handler)
+				} else {
+					route.Delete(routeItem.Route, routeItem.Handler)
+				}
+			case http.MethodPatch:
+				if routeItem.RequiresAuth {
+					route.Patch(routeItem.Route, middleware.JWTMiddleware, routeItem.Handler)
+				} else {
+					route.Patch(routeItem.Route, routeItem.Handler)
+				}
 			}
 		}
 	}
 }
-
 func errorHandler(c *fiber.Ctx, err error) error {
 	code := fiber.StatusInternalServerError
 	var e *fiber.Error
@@ -52,14 +68,18 @@ func errorHandler(c *fiber.Ctx, err error) error {
 		"message": err.Error(),
 	})
 }
-
 func NewHttpFiberServer(lc fx.Lifecycle, h *types.HandlersStore, cfg *config.Config) *fiber.App {
 	app := fiber.New(fiber.Config{
 		ErrorHandler: errorHandler,
 	})
 
 	app.Use(cors.New())
+
 	app.Use(logger.New())
+
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{"status": "ok"})
+	})
 
 	setRoutesByModule(app, h)
 

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	r "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/response"
-	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/domain/entities"
 	usecases "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/usecases"
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,9 +18,10 @@ func NewGetAllUsersController(usecase *usecases.GetAllUsers, r *r.Result) *GetAl
 	}
 }
 
-func (ph *GetAllUsersController) Run(c *fiber.Ctx) (err error) {
-	var user entities.User
-
-	ph.result.Ok(c, user)
-	return
+func (ph *GetAllUsersController) Run(c *fiber.Ctx) error {
+	users, err := ph.usecase.Execute()
+	if err != nil {
+		return ph.result.Error(c, err)
+	}
+	return ph.result.Ok(c, users)
 }

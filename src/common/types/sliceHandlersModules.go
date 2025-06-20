@@ -5,16 +5,16 @@ import (
 )
 
 type HandlerModule struct {
-	Handler func(c *fiber.Ctx) error
-	Route   string
-	Method  interface{}
+	Handler      func(*fiber.Ctx) error
+	Route        string
+	Method       interface{}
+	RequiresAuth bool
 }
 
 type SliceHandlers struct {
 	Prefix string
 	Routes []HandlerModule
 }
-
 type GlobalHandlers []SliceHandlers
 
 type HandlersStore struct {

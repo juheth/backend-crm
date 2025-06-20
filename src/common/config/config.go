@@ -37,12 +37,12 @@ func NewConfig() *Config {
 	return &Config{
 		&ConfigApp{
 			Port:      os.Getenv("HTTP_PORT"),
-			SecretKey: os.Getenv("JWT_SECRET"),
+			SecretKey: os.Getenv("JWT_SECRET_KEY"),
 		},
 		&ConfigDB{
 			Host:     os.Getenv("DB_HOST"),
 			Password: os.Getenv("DB_PASSWORD"),
-			Username: os.Getenv("DB_USER"),
+			Username: os.Getenv("DB_USER_NAME"),
 			Charset:  os.Getenv("DB_CHARSET"),
 			Dbname:   os.Getenv("DB_NAME"),
 			Port:     os.Getenv("DB_PORT"),

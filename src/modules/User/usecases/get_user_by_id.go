@@ -6,17 +6,17 @@ import (
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/domain/repository"
 )
 
-type GetAllUsers struct {
+type GetUserById struct {
 	repo repository.UserRepository
 }
 
-func NewGetAllUsers(repo *dao.MySQLUserDao) *GetAllUsers {
-	return &GetAllUsers{
+func NewGetUserById(repo *dao.MySQLUserDao) *GetUserById {
+	return &GetUserById{
 		repo: repo,
 	}
 }
 
-func (u *GetAllUsers) Execute() ([]entities.User, error) {
-	users, err := u.repo.GetAllUsers(1, 10)
-	return users, err
+func (u *GetUserById) Execute(id int) (entities.User, error) {
+	user, err := u.repo.GetUserById(id)
+	return user, err
 }
