@@ -44,3 +44,13 @@ func (dao *MySQLClientDao) GetClientByID(id int) (*entities.Client, error) {
 	}
 	return &client, nil
 }
+
+func (dao *MySQLClientDao) UpdateClient(client *entities.Client) error {
+	return dao.db.Model(&entities.Client{}).
+		Where("id = ?", client.ID).
+		Updates(map[string]interface{}{
+			"name":  client.Name,
+			"email": client.Email,
+			"phone": client.Phone,
+		}).Error
+}

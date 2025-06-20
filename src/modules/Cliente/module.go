@@ -15,6 +15,7 @@ func configureModuleRoutes(
 	ctrlCreateClient *controllers.CreateClientController,
 	ctrlGetAllClients *controllers.GetAllClientsController,
 	ctrlGetClientByID *controllers.GetClientByIDController,
+	ctrlUpdateClient *controllers.UpdateClientController,
 	h *types.HandlersStore,
 ) {
 
@@ -39,6 +40,12 @@ func configureModuleRoutes(
 				Handler:      ctrlGetClientByID.Run,
 				RequiresAuth: true,
 			},
+			{
+				Route:        "/update/:id",
+				Method:       http.MethodPut,
+				Handler:      ctrlUpdateClient.Run,
+				RequiresAuth: true,
+			},
 		},
 	}
 	h.Handlers = append(h.Handlers, *handlersModuleClients)
@@ -53,6 +60,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(usecases.NewGetAllClients),
 		fx.Provide(controllers.NewGetClientByIDController),
 		fx.Provide(usecases.NewGetClientById),
+		fx.Provide(controllers.NewUpdateClientController),
+		fx.Provide(usecases.NewUpdateClient),
 		fx.Invoke(configureModuleRoutes),
 	}
 }
