@@ -35,3 +35,12 @@ func (dao *MySQLClientDao) GetAllClients() ([]*entities.Client, error) {
 	}
 	return clients, nil
 }
+
+func (dao *MySQLClientDao) GetClientByID(id int) (*entities.Client, error) {
+	var client entities.Client
+	err := dao.db.First(&client, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &client, nil
+}

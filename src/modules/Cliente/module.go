@@ -14,6 +14,7 @@ import (
 func configureModuleRoutes(
 	ctrlCreateClient *controllers.CreateClientController,
 	ctrlGetAllClients *controllers.GetAllClientsController,
+	ctrlGetClientByID *controllers.GetClientByIDController,
 	h *types.HandlersStore,
 ) {
 
@@ -32,6 +33,12 @@ func configureModuleRoutes(
 				Handler:      ctrlGetAllClients.Run,
 				RequiresAuth: true,
 			},
+			{
+				Route:        "/get/:id",
+				Method:       http.MethodGet,
+				Handler:      ctrlGetClientByID.Run,
+				RequiresAuth: true,
+			},
 		},
 	}
 	h.Handlers = append(h.Handlers, *handlersModuleClients)
@@ -44,6 +51,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(usecases.NewCreateClient),
 		fx.Provide(controllers.NewGetAllClientsController),
 		fx.Provide(usecases.NewGetAllClients),
+		fx.Provide(controllers.NewGetClientByIDController),
+		fx.Provide(usecases.NewGetClientById),
 		fx.Invoke(configureModuleRoutes),
 	}
 }
