@@ -26,3 +26,12 @@ func (dao *MySQLClientDao) ExistsByEmailOrPhone(email, phone string) (bool, erro
 		Count(&count).Error
 	return count > 0, err
 }
+
+func (dao *MySQLClientDao) GetAllClients() ([]*entities.Client, error) {
+	var clients []*entities.Client
+	err := dao.db.Find(&clients).Error
+	if err != nil {
+		return nil, err
+	}
+	return clients, nil
+}

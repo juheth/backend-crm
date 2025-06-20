@@ -13,6 +13,7 @@ import (
 
 func configureModuleRoutes(
 	ctrlCreateClient *controllers.CreateClientController,
+	ctrlGetAllClients *controllers.GetAllClientsController,
 	h *types.HandlersStore,
 ) {
 
@@ -25,6 +26,12 @@ func configureModuleRoutes(
 				Handler:      ctrlCreateClient.Run,
 				RequiresAuth: false,
 			},
+			{
+				Route:        "/get-all",
+				Method:       http.MethodGet,
+				Handler:      ctrlGetAllClients.Run,
+				RequiresAuth: true,
+			},
 		},
 	}
 	h.Handlers = append(h.Handlers, *handlersModuleClients)
@@ -35,6 +42,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(dao.NewMySQLClientDao),
 		fx.Provide(controllers.NewCreateClientController),
 		fx.Provide(usecases.NewCreateClient),
+		fx.Provide(controllers.NewGetAllClientsController),
+		fx.Provide(usecases.NewGetAllClients),
 		fx.Invoke(configureModuleRoutes),
 	}
 }

@@ -7,4 +7,5 @@ import (
 type ClientRepository interface {
 	CreateClient(client *entities.Client) error
 	ExistsByEmailOrPhone(email, phone string) (bool, error)
+	GetAllClients() ([]*entities.Client, error)
 }
