@@ -9,4 +9,6 @@ type ClientRepository interface {
 	ExistsByEmailOrPhone(email, phone string) (bool, error)
 	GetAllClients() ([]*entities.Client, error)
 	GetClientByID(id int) (*entities.Client, error)
+	UpdateClient(client *entities.Client) error
+	GetClientsByCreator(creatorID int) ([]entities.Client, error)
 }
