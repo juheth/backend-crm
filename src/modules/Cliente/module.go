@@ -15,8 +15,6 @@ func configureModuleRoutes(
 	ctrlCreateClient *controllers.CreateClientController,
 	ctrlGetAllClients *controllers.GetAllClientsController,
 	ctrlGetClientByID *controllers.GetClientByIDController,
-	ctrlUpdateClient *controllers.UpdateClientController,
-	ctrlGetClientsByCreator *controllers.GetClientsByCreatorController,
 	h *types.HandlersStore,
 ) {
 
@@ -27,7 +25,7 @@ func configureModuleRoutes(
 				Route:        "/create",
 				Method:       http.MethodPost,
 				Handler:      ctrlCreateClient.Run,
-				RequiresAuth: true,
+				RequiresAuth: false,
 			},
 			{
 				Route:        "/get-all",
@@ -39,18 +37,6 @@ func configureModuleRoutes(
 				Route:        "/get/:id",
 				Method:       http.MethodGet,
 				Handler:      ctrlGetClientByID.Run,
-				RequiresAuth: true,
-			},
-			{
-				Route:        "/update/:id",
-				Method:       http.MethodPut,
-				Handler:      ctrlUpdateClient.Run,
-				RequiresAuth: true,
-			},
-			{
-				Route:        "/creator/:creatorId",
-				Method:       http.MethodGet,
-				Handler:      ctrlGetClientsByCreator.Run,
 				RequiresAuth: true,
 			},
 		},
@@ -67,11 +53,6 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(usecases.NewGetAllClients),
 		fx.Provide(controllers.NewGetClientByIDController),
 		fx.Provide(usecases.NewGetClientById),
-		fx.Provide(controllers.NewUpdateClientController),
-		fx.Provide(usecases.NewUpdateClient),
-		fx.Provide(controllers.NewGetClientsByCreatorController),
-		fx.Provide(usecases.NewGetClientsByCreator),
-
 		fx.Invoke(configureModuleRoutes),
 	}
 }
