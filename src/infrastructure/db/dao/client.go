@@ -54,3 +54,11 @@ func (dao *MySQLClientDao) UpdateClient(client *entities.Client) error {
 			"phone": client.Phone,
 		}).Error
 }
+
+func (dao *MySQLClientDao) GetClientsByCreator(creatorID int) ([]entities.Client, error) {
+	var clients []entities.Client
+	if err := dao.db.Where("created_by = ?", creatorID).Find(&clients).Error; err != nil {
+		return nil, err
+	}
+	return clients, nil
+}
