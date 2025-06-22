@@ -8,6 +8,7 @@ import (
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Producto/domain/dto"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Producto/domain/entities"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Producto/domain/repository"
+	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Producto/utils"
 )
 
 type CreateProduct struct {
@@ -19,6 +20,10 @@ func NewCreateProduct(repo *dao.MySQLProductDao) *CreateProduct {
 }
 
 func (uc *CreateProduct) Execute(Request dto.CreateProductRequest) (*dto.ProductResponse, error) {
+	if err := utils.ValidateProductInput(Request.Name, Request.Description, Request.Price, Request.Stock); err != nil {
+		return nil, err
+	}
+
 	exists, err := uc.repo.ExistsByName(Request.Name)
 	if err != nil {
 		return nil, err
