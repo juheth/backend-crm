@@ -24,23 +24,20 @@ func (r *Result) Ok(c *fiber.Ctx, data ...interface{}) error {
 func (r *Result) Error(c *fiber.Ctx, data interface{}) error {
 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 		"isError": true,
-		"data":    struct{}{},
-		"message": data,
+		"data":    data,
 	})
 }
 
 func (r *Result) Bad(c *fiber.Ctx, data interface{}) error {
 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 		"isError": true,
-		"data":    struct{}{},
-		"message": data,
+		"data":    data,
 	})
 }
 
 func (r *Result) Custom(c *fiber.Ctx, data interface{}, statusCode int) error {
 	return c.Status(statusCode).JSON(fiber.Map{
 		"isError": true,
-		"data":    struct{}{},
-		"message": data,
+		"data":    data,
 	})
 }

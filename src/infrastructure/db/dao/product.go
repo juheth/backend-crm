@@ -23,9 +23,3 @@ func (dao *MySQLProductDao) ExistsByName(name string) (bool, error) {
 	err := dao.db.Model(&entities.Product{}).Where("name = ?", name).Count(&count).Error
 	return count > 0, err
 }
-
-func (dao *MySQLProductDao) GetAll() ([]*entities.Product, error) {
-	var products []*entities.Product
-	err := dao.db.Where("status = ?", true).Find(&products).Error
-	return products, err
-}
