@@ -13,6 +13,7 @@ import (
 
 func configureModuleRoutes(
 	ctrlCreateProduct *controllers.CreateProductController,
+	ctrlGetAllProducts *controllers.GetAllProductsController,
 
 	h *types.HandlersStore,
 ) {
@@ -25,7 +26,12 @@ func configureModuleRoutes(
 				Handler:      ctrlCreateProduct.Run,
 				RequiresAuth: true,
 			},
-			{},
+			{
+				Route:        "/",
+				Method:       http.MethodGet,
+				Handler:      ctrlGetAllProducts.Run,
+				RequiresAuth: true,
+			},
 		},
 	}
 	h.Handlers = append(h.Handlers, *handlersModuleProducts)
@@ -36,6 +42,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(dao.NewMySQLProductDao),
 		fx.Provide(controllers.NewCreateProductController),
 		fx.Provide(usecases.NewCreateProduct),
+		fx.Provide(controllers.NewGetAllProductsController),
+		fx.Provide(usecases.NewGetAllProducts),
 
 		fx.Invoke(configureModuleRoutes),
 	}
