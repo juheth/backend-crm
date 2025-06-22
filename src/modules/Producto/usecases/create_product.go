@@ -20,7 +20,7 @@ func NewCreateProduct(repo *dao.MySQLProductDao) *CreateProduct {
 }
 
 func (uc *CreateProduct) Execute(Request dto.CreateProductRequest) (*dto.ProductResponse, error) {
-	if err := utils.ValidateProductInput(Request.Name, Request.Description, Request.Price, Request.Stock); err != nil {
+	if err := utils.ValidateCreateProduct(Request); err != nil {
 		return nil, err
 	}
 

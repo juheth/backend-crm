@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"github.com/gofiber/fiber/v2"
 	r "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/response"
-	usecases "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Producto/usecases"
+	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Producto/usecases"
+	"github.com/gofiber/fiber/v2"
 )
 
 type GetAllProductsController struct {
@@ -11,14 +11,14 @@ type GetAllProductsController struct {
 	result  *r.Result
 }
 
-func NewGetAllProductsController(usecase *usecases.GetAllProducts, result *r.Result) *GetAllProductsController {
-	return &GetAllProductsController{usecase, result}
+func NewGetAllProductsController(uc *usecases.GetAllProducts, r *r.Result) *GetAllProductsController {
+	return &GetAllProductsController{usecase: uc, result: r}
 }
 
-func (ph *GetAllProductsController) Run(c *fiber.Ctx) error {
-	products, err := ph.usecase.Execute()
+func (c *GetAllProductsController) Run(ctx *fiber.Ctx) error {
+	products, err := c.usecase.Execute()
 	if err != nil {
-		return ph.result.Error(c, err)
+		return c.result.Error(ctx, err.Error())
 	}
-	return ph.result.Ok(c, products)
+	return c.result.Ok(ctx, products)
 }

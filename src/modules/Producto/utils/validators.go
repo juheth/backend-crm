@@ -2,24 +2,38 @@ package utils
 
 import (
 	"errors"
-	"strings"
+
+	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Producto/domain/dto"
 )
 
-func ValidateProductInput(name, description string, price float64, stock int) error {
-	if strings.TrimSpace(name) == "" {
-		return errors.New("El nombre es obligatorio")
+func ValidateCreateProduct(input dto.CreateProductRequest) error {
+	if input.Name == "" {
+		return errors.New("el nombre es obligatorio")
 	}
-	if len(name) < 3 {
-		return errors.New("El nombre debe tener al menos 3 caracteres")
+	if input.Description == "" {
+		return errors.New("la descripción es obligatoria")
 	}
-	if strings.TrimSpace(description) == "" {
-		return errors.New("La descripción es obligatoria")
+	if input.Price <= 0 {
+		return errors.New("el precio debe ser mayor que cero")
 	}
-	if price <= 0 {
-		return errors.New("El precio debe ser mayor a 0")
+	if input.Stock < 0 {
+		return errors.New("el stock no puede ser negativo")
 	}
-	if stock < 0 {
-		return errors.New("El stock no puede ser negativo")
+	return nil
+}
+
+func ValidateUpdateProduct(input dto.UpdateProductRequest) error {
+	if input.Name == "" {
+		return errors.New("el nombre es obligatorio")
+	}
+	if input.Description == "" {
+		return errors.New("la descripción es obligatoria")
+	}
+	if input.Price <= 0 {
+		return errors.New("el precio debe ser mayor que cero")
+	}
+	if input.Stock < 0 {
+		return errors.New("el stock no puede ser negativo")
 	}
 	return nil
 }
