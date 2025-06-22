@@ -7,4 +7,5 @@ import (
 type ProductRepository interface {
 	Create(product *entities.Product) error
 	ExistsByName(name string) (bool, error)
+	GetAll() ([]*entities.Product, error)
 }
