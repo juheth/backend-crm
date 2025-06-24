@@ -9,4 +9,5 @@ type ProductRepository interface {
 	ExistsByName(name string) (bool, error)
 	GetAll() ([]*entities.Product, error)
 	GetProductByID(id int) (*entities.Product, error)
+	UpdateProduct(product *entities.Product) error
 }

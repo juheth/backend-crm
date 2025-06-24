@@ -42,3 +42,14 @@ func (dao *MySQLProductDao) GetProductByID(id int) (*entities.Product, error) {
 	}
 	return &product, nil
 }
+
+func (dao *MySQLProductDao) UpdateProduct(product *entities.Product) error {
+	return dao.db.Model(&entities.Product{}).
+		Where("id = ? AND status = ?", product.ID, true).
+		Updates(map[string]interface{}{
+			"name":        product.Name,
+			"description": product.Description,
+			"price":       product.Price,
+			"stock":       product.Stock,
+		}).Error
+}

@@ -10,4 +10,5 @@ type Product struct {
 	Stock       int       `json:"stock"`
 	Status      bool      `json:"status"`
 	CreatedAt   time.Time `json:"createdAt" gorm:"autoCreateTime"`
+	UpdatedAt   time.Time `json:"updatedAt" gorm:"autoUpdateTime"`
 }
