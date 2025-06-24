@@ -14,6 +14,7 @@ import (
 func configureModuleRoutes(
 	ctrlCreateProduct *controllers.CreateProductController,
 	ctrlGetAllProducts *controllers.GetAllProductsController,
+	ctrlGetProductByID *controllers.GetProductByIDController,
 
 	h *types.HandlersStore,
 ) {
@@ -32,6 +33,12 @@ func configureModuleRoutes(
 				Handler:      ctrlGetAllProducts.Run,
 				RequiresAuth: true,
 			},
+			{
+				Route:        "/:id",
+				Method:       http.MethodGet,
+				Handler:      ctrlGetProductByID.Run,
+				RequiresAuth: true,
+			},
 		},
 	}
 	h.Handlers = append(h.Handlers, *handlersModuleProducts)
@@ -44,6 +51,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(usecases.NewCreateProduct),
 		fx.Provide(controllers.NewGetAllProductsController),
 		fx.Provide(usecases.NewGetAllProducts),
+		fx.Provide(controllers.NewGetProductByIDController),
+		fx.Provide(usecases.NewGetProductByID),
 
 		fx.Invoke(configureModuleRoutes),
 	}
