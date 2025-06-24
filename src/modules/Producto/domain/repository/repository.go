@@ -15,4 +15,5 @@ type ProductRepository interface {
 	ActivateProduct(id int) error
 	GetProductByIDAnyStatus(id int) (*entities.Product, error)
 	GetAllDeactivated() ([]*entities.Product, error)
+	GetLowStock(threshold int) ([]*entities.Product, error)
 }
