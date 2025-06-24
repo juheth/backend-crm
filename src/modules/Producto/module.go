@@ -14,8 +14,6 @@ import (
 func configureModuleRoutes(
 	ctrlCreateProduct *controllers.CreateProductController,
 	ctrlGetAllProducts *controllers.GetAllProductsController,
-	ctrlGetProductByID *controllers.GetProductByIDController,
-	ctrlUpdateProduct *controllers.UpdateProductController,
 
 	h *types.HandlersStore,
 ) {
@@ -29,21 +27,9 @@ func configureModuleRoutes(
 				RequiresAuth: true,
 			},
 			{
-				Route:        "/get-all",
+				Route:        "/",
 				Method:       http.MethodGet,
 				Handler:      ctrlGetAllProducts.Run,
-				RequiresAuth: true,
-			},
-			{
-				Route:        "/:id",
-				Method:       http.MethodGet,
-				Handler:      ctrlGetProductByID.Run,
-				RequiresAuth: true,
-			},
-			{
-				Route:        "/Update/:id",
-				Method:       http.MethodPut,
-				Handler:      ctrlUpdateProduct.Run,
 				RequiresAuth: true,
 			},
 		},
@@ -58,10 +44,6 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(usecases.NewCreateProduct),
 		fx.Provide(controllers.NewGetAllProductsController),
 		fx.Provide(usecases.NewGetAllProducts),
-		fx.Provide(controllers.NewGetProductByIDController),
-		fx.Provide(usecases.NewGetProductByID),
-		fx.Provide(controllers.NewUpdateProductController),
-		fx.Provide(usecases.NewUpdateProduct),
 
 		fx.Invoke(configureModuleRoutes),
 	}

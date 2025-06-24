@@ -37,6 +37,3 @@ func ValidateUpdateProduct(input dto.UpdateProductRequest) error {
 	}
 	return nil
 }
-
-
-
