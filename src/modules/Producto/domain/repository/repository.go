@@ -14,4 +14,5 @@ type ProductRepository interface {
 	DeleteProduct(id int) error
 	ActivateProduct(id int) error
 	GetProductByIDAnyStatus(id int) (*entities.Product, error)
+	GetAllDeactivated() ([]*entities.Product, error)
 }
