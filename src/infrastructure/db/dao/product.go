@@ -29,3 +29,33 @@ func (dao *MySQLProductDao) GetAll() ([]*entities.Product, error) {
 	err := dao.db.Where("status = ?", true).Find(&products).Error
 	return products, err
 }
+
+func (dao *MySQLProductDao) GetProductByID(id int) (*entities.Product, error) {
+	var product entities.Product
+	err := dao.db.Where("id = ? AND status = ?", id, true).First(&product).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+	return &product, nil
+}
+
+func (dao *MySQLProductDao) UpdateProduct(product *entities.Product) error {
+	return dao.db.Model(&entities.Product{}).
+		Where("id = ? AND status = ?", product.ID, true).
+		Updates(map[string]interface{}{
+			"name":        product.Name,
+			"description": product.Description,
+			"price":       product.Price,
+			"stock":       product.Stock,
+		}).Error
+}
+
+func (dao *MySQLProductDao) DeactivateProduct(id int) error {
+	return dao.db.Model(&entities.Product{}).
+		Where("id = ? AND status = ?", id, true).
+		Update("status", false).Error
+}
