@@ -66,6 +66,11 @@ func (dao *MySQLProductDao) ActivateProduct(id int) error {
 		Update("status", true).Error
 }
 
+func (dao *MySQLProductDao) GetAllDeactivated() ([]*entities.Product, error) {
+	var products []*entities.Product
+	err := dao.db.Where("status = ?", false).Find(&products).Error
+	return products, err
+}
 func (dao *MySQLProductDao) GetProductByIDAnyStatus(id int) (*entities.Product, error) {
 	var product entities.Product
 	err := dao.db.Where("id = ?", id).First(&product).Error
