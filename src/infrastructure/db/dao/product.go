@@ -53,3 +53,9 @@ func (dao *MySQLProductDao) UpdateProduct(product *entities.Product) error {
 			"stock":       product.Stock,
 		}).Error
 }
+
+func (dao *MySQLProductDao) DeactivateProduct(id int) error {
+	return dao.db.Model(&entities.Product{}).
+		Where("id = ? AND status = ?", id, true).
+		Update("status", false).Error
+}

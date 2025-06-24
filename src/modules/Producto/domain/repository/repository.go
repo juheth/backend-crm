@@ -10,4 +10,5 @@ type ProductRepository interface {
 	GetAll() ([]*entities.Product, error)
 	GetProductByID(id int) (*entities.Product, error)
 	UpdateProduct(product *entities.Product) error
+	DeactivateProduct(id int) error
 }

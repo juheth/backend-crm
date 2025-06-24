@@ -18,13 +18,15 @@ func NewGetProductByIDController(uc *usecases.GetProductByID, r *r.Result) *GetP
 }
 
 func (c *GetProductByIDController) Run(ctx *fiber.Ctx) error {
-	id, err := strconv.Atoi(ctx.Params("id"))
+	idParam := ctx.Params("id")
+	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		return c.result.Bad(ctx, "ID de producto inválido")
+		return c.result.Bad(ctx, "ID inválido")
 	}
+
 	product, err := c.usecase.Execute(id)
 	if err != nil {
-		return c.result.Bad(ctx, "Error al obtener el producto")
+		return c.result.Bad(ctx, err.Error())
 	}
-	return c.result.Ok(ctx, fiber.StatusOK, product)
+	return c.result.Ok(ctx, product)
 }

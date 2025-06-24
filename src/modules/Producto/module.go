@@ -16,6 +16,7 @@ func configureModuleRoutes(
 	ctrlGetAllProducts *controllers.GetAllProductsController,
 	ctrlGetProductByID *controllers.GetProductByIDController,
 	ctrlUpdateProduct *controllers.UpdateProductController,
+	ctrlDeactivateProduct *controllers.DeactivateProductController,
 
 	h *types.HandlersStore,
 ) {
@@ -46,6 +47,12 @@ func configureModuleRoutes(
 				Handler:      ctrlUpdateProduct.Run,
 				RequiresAuth: true,
 			},
+			{
+				Route:        "/:id/deactivate",
+				Method:       http.MethodPut,
+				Handler:      ctrlDeactivateProduct.Run,
+				RequiresAuth: true,
+			},
 		},
 	}
 	h.Handlers = append(h.Handlers, *handlersModuleProducts)
@@ -62,6 +69,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(usecases.NewGetProductByID),
 		fx.Provide(controllers.NewUpdateProductController),
 		fx.Provide(usecases.NewUpdateProduct),
+		fx.Provide(controllers.NewDeactivateProductController),
+		fx.Provide(usecases.NewDeactivateProduct),
 
 		fx.Invoke(configureModuleRoutes),
 	}
