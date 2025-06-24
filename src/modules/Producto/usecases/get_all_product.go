@@ -3,11 +3,10 @@ package usecases
 import (
 	dao "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/infrastructure/db/dao"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Producto/domain/dto"
-	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Producto/domain/repository"
 )
 
 type GetAllProducts struct {
-	repo repository.ProductRepository
+	repo *dao.MySQLProductDao
 }
 
 func NewGetAllProducts(repo *dao.MySQLProductDao) *GetAllProducts {

@@ -59,7 +59,3 @@ func (dao *MySQLProductDao) DeactivateProduct(id int) error {
 		Where("id = ? AND status = ?", id, true).
 		Update("status", false).Error
 }
-
-func (dao *MySQLProductDao) DeleteProduct(id int) error {
-	return dao.db.Where("id = ?", id).Delete(&entities.Product{}).Error
-}
