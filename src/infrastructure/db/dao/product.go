@@ -60,6 +60,24 @@ func (dao *MySQLProductDao) DeactivateProduct(id int) error {
 		Update("status", false).Error
 }
 
+func (dao *MySQLProductDao) ActivateProduct(id int) error {
+	return dao.db.Model(&entities.Product{}).
+		Where("id = ? AND status = ?", id, false).
+		Update("status", true).Error
+}
+
+func (dao *MySQLProductDao) GetProductByIDAnyStatus(id int) (*entities.Product, error) {
+	var product entities.Product
+	err := dao.db.Where("id = ?", id).First(&product).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &product, nil
+}
+
 func (dao *MySQLProductDao) DeleteProduct(id int) error {
-    return dao.db.Where("id = ?", id).Delete(&entities.Product{}).Error
+	return dao.db.Where("id = ?", id).Delete(&entities.Product{}).Error
 }
