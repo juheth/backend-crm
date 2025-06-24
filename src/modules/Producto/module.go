@@ -20,6 +20,7 @@ func configureModuleRoutes(
 	ctrlDeleteProduct *controllers.DeleteProductController,
 	ctrlActivateProduct *controllers.ActivateProductController,
 	ctrlGetAllDeactivatedProducts *controllers.GetAllDeactivatedProductsController,
+	ctrlGetLowStockProducts *controllers.GetLowStockProductsController,
 
 	h *types.HandlersStore,
 ) {
@@ -36,6 +37,12 @@ func configureModuleRoutes(
 				Route:        "/get-all",
 				Method:       http.MethodGet,
 				Handler:      ctrlGetAllProducts.Run,
+				RequiresAuth: true,
+			},
+			{
+				Route:        "/low-stock",
+				Method:       http.MethodGet,
+				Handler:      ctrlGetLowStockProducts.Run,
 				RequiresAuth: true,
 			},
 			{
@@ -98,6 +105,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(usecases.NewActivateProduct),
 		fx.Provide(controllers.NewGetAllDeactivatedProductsController),
 		fx.Provide(usecases.NewGetAllDeactivatedProducts),
+		fx.Provide(controllers.NewGetLowStockProductsController),
+		fx.Provide(usecases.NewGetLowStockProducts),
 
 		fx.Invoke(configureModuleRoutes),
 	}

@@ -83,6 +83,12 @@ func (dao *MySQLProductDao) GetProductByIDAnyStatus(id int) (*entities.Product, 
 	return &product, nil
 }
 
+func (dao *MySQLProductDao) GetLowStock(threshold int) ([]*entities.Product, error) {
+	var products []*entities.Product
+	err := dao.db.Where("status = ? AND stock <= ?", true, threshold).Find(&products).Error
+	return products, err
+}
+
 func (dao *MySQLProductDao) DeleteProduct(id int) error {
 	return dao.db.Where("id = ?", id).Delete(&entities.Product{}).Error
 }
