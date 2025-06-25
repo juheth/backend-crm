@@ -47,11 +47,12 @@ func (uc *CreateProduct) Execute(Request dto.CreateProductRequest) (*dto.Product
 	}
 
 	return &dto.ProductResponse{
-		ID:        product.ID,
-		Name:      product.Name,
-		Price:     product.Price,
-		Stock:     product.Stock,
-		Status:    product.Status,
-		CreatedAt: product.CreatedAt,
+		ID:          product.ID,
+		Name:        product.Name,
+		Description: product.Description,
+		Price:       product.Price,
+		Stock:       product.Stock,
+		Status:      product.Status,
+		CreatedAt:   product.CreatedAt,
 	}, nil
 }

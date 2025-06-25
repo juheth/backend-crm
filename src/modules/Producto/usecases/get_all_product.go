@@ -22,12 +22,13 @@ func (uc *GetAllProducts) Execute() ([]dto.ProductResponse, error) {
 	var result []dto.ProductResponse
 	for _, p := range products {
 		result = append(result, dto.ProductResponse{
-			ID:        p.ID,
-			Name:      p.Name,
-			Price:     p.Price,
-			Stock:     p.Stock,
-			Status:    p.Status,
-			CreatedAt: p.CreatedAt,
+			ID:          p.ID,
+			Name:        p.Name,
+			Description: p.Description,
+			Price:       p.Price,
+			Stock:       p.Stock,
+			Status:      p.Status,
+			CreatedAt:   p.CreatedAt,
 		})
 	}
 	return result, nil
