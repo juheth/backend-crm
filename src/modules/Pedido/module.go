@@ -12,6 +12,7 @@ import (
 
 func configureModuleRoutes(
 	ctrlCreateOrder *controllers.CreateOrderController,
+	ctrlGetAllOrders *controllers.GetAllOrdersController,
 	h *types.HandlersStore,
 ) {
 	handlersModuleOrders := &types.SliceHandlers{
@@ -21,6 +22,12 @@ func configureModuleRoutes(
 				Route:        "create",
 				Method:       http.MethodPost,
 				Handler:      ctrlCreateOrder.Run,
+				RequiresAuth: true,
+			},
+			{
+				Route:        "get-all",
+				Method:       http.MethodGet,
+				Handler:      ctrlGetAllOrders.Run,
 				RequiresAuth: true,
 			},
 		},
@@ -33,6 +40,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(dao.NewMySQLOrderDao),
 		fx.Provide(usecases.NewCreateOrder),
 		fx.Provide(controllers.NewCreateOrderController),
+		fx.Provide(usecases.NewGetAllOrders),
+		fx.Provide(controllers.NewGetAllOrdersController),
 		fx.Invoke(configureModuleRoutes),
 	}
 }

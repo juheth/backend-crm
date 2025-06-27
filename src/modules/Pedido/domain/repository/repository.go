@@ -7,4 +7,5 @@ import (
 type OrderRepository interface {
 	CreateOrder(order *entities.Order) error
 	GetProductPrice(productID int) (float64, error)
+	GetAllOrders() ([]*entities.Order, error)
 }

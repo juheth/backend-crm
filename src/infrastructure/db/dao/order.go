@@ -32,3 +32,12 @@ func (dao *MySQLClientDao) ExistsByID(id int) (bool, error) {
 	err := dao.db.Table("clients").Where("id = ?", id).Count(&count).Error
 	return count > 0, err
 }
+
+func (dao *MySQLOrderDao) GetAllOrders() ([]*entities.Order, error) {
+	var orders []*entities.Order
+	err := dao.db.Preload("Items").Find(&orders).Error
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
+}
