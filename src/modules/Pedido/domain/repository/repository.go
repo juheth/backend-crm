@@ -11,4 +11,5 @@ type OrderRepository interface {
 	GetOrderByID(id int) (*entities.Order, error)
 	UpdateOrderStatus(orderID int, status string) error
 	DeleteOrder(orderID int) error
+	GetOrdersByClient(clientId int) ([]*entities.Order, error)
 }

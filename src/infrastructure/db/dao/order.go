@@ -70,3 +70,12 @@ func (dao *MySQLOrderDao) DeleteOrder(orderID int) error {
 	}
 	return tx.Commit().Error
 }
+
+func (dao *MySQLOrderDao) GetOrdersByClient(clientId int) ([]*entities.Order, error) {
+    var orders []*entities.Order
+    err := dao.db.Preload("Items").Where("client_id = ?", clientId).Find(&orders).Error
+    if err != nil {
+        return nil, err
+    }
+    return orders, nil
+}

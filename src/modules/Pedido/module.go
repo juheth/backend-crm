@@ -16,6 +16,7 @@ func configureModuleRoutes(
 	ctrlGetOrderByID *controllers.GetOrderByIDController,
 	ctrlUpdateOrderStatus *controllers.UpdateOrderStatusController,
 	ctrlDeleteOrder *controllers.DeleteOrderController,
+	ctrlGetOrdersByClient *controllers.GetOrdersByClientController,
 	h *types.HandlersStore,
 ) {
 	handlersModuleOrders := &types.SliceHandlers{
@@ -33,6 +34,12 @@ func configureModuleRoutes(
 				Handler:      ctrlGetOrderByID.Run,
 				RequiresAuth: true,
 			},
+			{
+                Route:        "by-client/:clientId",
+                Method:       http.MethodGet,
+                Handler:      ctrlGetOrdersByClient.Run,
+                RequiresAuth: true,
+            },
 			{
 				Route:        "create",
 				Method:       http.MethodPost,
@@ -69,6 +76,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(controllers.NewUpdateOrderStatusController),
 		fx.Provide(usecases.NewDeleteOrder),
 		fx.Provide(controllers.NewDeleteOrderController),
+		fx.Provide(usecases.NewGetOrdersByClient),
+		fx.Provide(controllers.NewGetOrdersByClientController),
 		fx.Invoke(configureModuleRoutes),
 	}
 }
