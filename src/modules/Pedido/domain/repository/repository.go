@@ -9,4 +9,5 @@ type OrderRepository interface {
 	GetProductPrice(productID int) (float64, error)
 	GetAllOrders() ([]*entities.Order, error)
 	GetOrderByID(id int) (*entities.Order, error)
+	UpdateOrderStatus(orderID int, status string) error
 }

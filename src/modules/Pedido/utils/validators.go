@@ -36,3 +36,19 @@ func ValidateCreateOrder(req dto.CreateOrderRequest, clientDao *dao.MySQLClientD
 	}
 	return nil
 }
+
+func ValidateUpdateOrderStatus(req dto.UpdateOrderStatusRequest) error {
+	if req.Status == "" {
+		return errors.New("El estado es obligatorio")
+	}
+	validStatuses := map[string]bool{
+		"pendiente": true,
+		"pagado":    true,
+		"cancelado": true,
+		"entregado": true,
+	}
+	if !validStatuses[req.Status] {
+		return fmt.Errorf("Estado inválido: %s. Debe ser uno de: pendiente, pagado, cancelado, entregado", req.Status)
+	}
+	return nil
+}
