@@ -52,7 +52,21 @@ func (dao *MySQLOrderDao) GetOrderByID(id int) (*entities.Order, error) {
 }
 
 func (dao *MySQLOrderDao) UpdateOrderStatus(orderID int, status string) error {
-    return dao.db.Model(&entities.Order{}).
-        Where("id = ?", orderID).
-        Update("status", status).Error
+	return dao.db.Model(&entities.Order{}).
+		Where("id = ?", orderID).
+		Update("status", status).Error
+}
+
+func (dao *MySQLOrderDao) DeleteOrder(orderID int) error {
+	tx := dao.db.Begin()
+	if err := tx.Where("order_id = ?", orderID).Delete(&entities.OrderItem{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Delete(&entities.Order{}, orderID).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit().Error
 }
