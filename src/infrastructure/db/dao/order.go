@@ -72,10 +72,19 @@ func (dao *MySQLOrderDao) DeleteOrder(orderID int) error {
 }
 
 func (dao *MySQLOrderDao) GetOrdersByClient(clientId int) ([]*entities.Order, error) {
-    var orders []*entities.Order
-    err := dao.db.Preload("Items").Where("client_id = ?", clientId).Find(&orders).Error
-    if err != nil {
-        return nil, err
-    }
-    return orders, nil
+	var orders []*entities.Order
+	err := dao.db.Preload("Items").Where("client_id = ?", clientId).Find(&orders).Error
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
+}
+
+func (dao *MySQLOrderDao) GetOrdersByStatus(status string) ([]*entities.Order, error) {
+	var orders []*entities.Order
+	err := dao.db.Preload("Items").Where("status = ?", status).Find(&orders).Error
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
 }
