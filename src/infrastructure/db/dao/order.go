@@ -41,3 +41,12 @@ func (dao *MySQLOrderDao) GetAllOrders() ([]*entities.Order, error) {
 	}
 	return orders, nil
 }
+
+func (dao *MySQLOrderDao) GetOrderByID(id int) (*entities.Order, error) {
+	var order entities.Order
+	err := dao.db.Preload("Items").First(&order, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &order, nil
+}

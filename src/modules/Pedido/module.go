@@ -1,4 +1,4 @@
-package Pedido
+package pedido
 
 import (
 	"net/http"
@@ -13,21 +13,28 @@ import (
 func configureModuleRoutes(
 	ctrlCreateOrder *controllers.CreateOrderController,
 	ctrlGetAllOrders *controllers.GetAllOrdersController,
+	ctrlGetOrderByID *controllers.GetOrderByIDController,
 	h *types.HandlersStore,
 ) {
 	handlersModuleOrders := &types.SliceHandlers{
 		Prefix: "orders",
 		Routes: []types.HandlerModule{
 			{
-				Route:        "create",
-				Method:       http.MethodPost,
-				Handler:      ctrlCreateOrder.Run,
-				RequiresAuth: true,
-			},
-			{
 				Route:        "get-all",
 				Method:       http.MethodGet,
 				Handler:      ctrlGetAllOrders.Run,
+				RequiresAuth: true,
+			},
+			{
+				Route:        ":id",
+				Method:       http.MethodGet,
+				Handler:      ctrlGetOrderByID.Run,
+				RequiresAuth: true,
+			},
+			{
+				Route:        "create",
+				Method:       http.MethodPost,
+				Handler:      ctrlCreateOrder.Run,
 				RequiresAuth: true,
 			},
 		},
@@ -42,6 +49,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(controllers.NewCreateOrderController),
 		fx.Provide(usecases.NewGetAllOrders),
 		fx.Provide(controllers.NewGetAllOrdersController),
+		fx.Provide(usecases.NewGetOrderByID),
+		fx.Provide(controllers.NewGetOrderByIDController),
 		fx.Invoke(configureModuleRoutes),
 	}
 }
