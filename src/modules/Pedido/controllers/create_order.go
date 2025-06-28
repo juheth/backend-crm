@@ -6,7 +6,9 @@ import (
 	dto "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Pedido/domain/dto"
 
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Pedido/usecases"
+	utils "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Pedido/utils"
 	"github.com/gofiber/fiber/v2"
+s
 )
 
 type CreateOrderController struct {
@@ -38,6 +40,11 @@ func (c *CreateOrderController) Run(ctx *fiber.Ctx) error {
 			return c.result.Bad(ctx, "userID inválido")
 		}
 	}
+
+
+	 if err := utils.ValidateCreateOrder(req, c.mysqlClientDao); err != nil {
+        return c.result.Bad(ctx, err.Error())
+    }
 
 	order, err := c.usecase.Execute(req, userID, c.mysqlClientDao)
 	if err != nil {

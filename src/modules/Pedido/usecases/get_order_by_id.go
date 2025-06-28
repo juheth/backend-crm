@@ -3,6 +3,8 @@ package usecases
 import (
 	"errors"
 
+	"gorm.io/gorm"
+
 	dao "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/infrastructure/db/dao"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Pedido/domain/dto"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Pedido/domain/repository"
@@ -19,6 +21,9 @@ func NewGetOrderByID(repo *dao.MySQLOrderDao) *GetOrderByID {
 func (uc *GetOrderByID) Execute(id int) (*dto.OrderResponse, error) {
 	order, err := uc.repo.GetOrderByID(id)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("Pedido no encontrado")
+		}
 		return nil, err
 	}
 	if order == nil {

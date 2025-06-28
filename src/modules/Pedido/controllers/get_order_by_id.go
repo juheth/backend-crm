@@ -24,7 +24,7 @@ func (c *GetOrderByIDController) Run(ctx *fiber.Ctx) error {
 	}
 	order, err := c.usecase.Execute(id)
 	if err != nil {
-		return c.result.Error(ctx, err)
+		return c.result.Bad(ctx, err.Error())
 	}
 	return c.result.Ok(ctx, order)
 }
