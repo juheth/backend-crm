@@ -50,3 +50,9 @@ func (dao *MySQLOrderDao) GetOrderByID(id int) (*entities.Order, error) {
 	}
 	return &order, nil
 }
+
+func (dao *MySQLOrderDao) UpdateOrderStatus(orderID int, status string) error {
+    return dao.db.Model(&entities.Order{}).
+        Where("id = ?", orderID).
+        Update("status", status).Error
+}
