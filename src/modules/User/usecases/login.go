@@ -34,5 +34,7 @@ func (l *LoginUser) Execute(payload dto.LoginDTO) (string, *entities.User, error
 		return "", nil, errors.New("error generando el token")
 	}
 
+	user.Password = ""
+
 	return token, &user, nil
 }

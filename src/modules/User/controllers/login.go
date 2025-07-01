@@ -70,9 +70,8 @@ func (ph *LoginUserController) Run(c *fiber.Ctx) error {
 	}
 
 	userDTO := dto.UserDTO{
-		ID:    user.ID,
-		Name:  user.Name,
-		Email: user.Email,
+		ID:   user.ID,
+		Name: user.Name,
 	}
 
 	resp := dto.LoginResponse{
