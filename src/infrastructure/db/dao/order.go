@@ -88,3 +88,46 @@ func (dao *MySQLOrderDao) GetOrdersByStatus(status string) ([]*entities.Order, e
 	}
 	return orders, nil
 }
+
+func (dao *MySQLOrderDao) GetOrderSummary() (totalPedidosMes int, ventasTotalesMes float64, ticketPromedio float64, porEstado map[string]int, err error) {
+	var totals struct {
+		TotalPedidosMes  int
+		VentasTotalesMes float64
+		TicketPromedio   float64
+	}
+	err = dao.db.Raw(`
+		SELECT
+			COUNT(*) AS total_pedidos_mes,
+			IFNULL(SUM(total),0) AS ventas_totales_mes,
+			IFNULL(AVG(total),0) AS ticket_promedio
+		FROM orders
+		WHERE MONTH(order_date) = MONTH(CURRENT_DATE())
+		  AND YEAR(order_date) = YEAR(CURRENT_DATE())
+	`).Scan(&totals).Error
+	if err != nil {
+		return 0, 0, 0, nil, err
+	}
+
+	type EstadoCount struct {
+		Status   string
+		Cantidad int
+	}
+	var estados []EstadoCount
+	err = dao.db.Raw(`
+		SELECT status, COUNT(*) as cantidad
+		FROM orders
+		WHERE MONTH(order_date) = MONTH(CURRENT_DATE())
+		  AND YEAR(order_date) = YEAR(CURRENT_DATE())
+		GROUP BY status
+	`).Scan(&estados).Error
+	if err != nil {
+		return 0, 0, 0, nil, err
+	}
+
+	porEstado = make(map[string]int)
+	for _, e := range estados {
+		porEstado[e.Status] = e.Cantidad
+	}
+
+	return totals.TotalPedidosMes, totals.VentasTotalesMes, totals.TicketPromedio, porEstado, nil
+}
