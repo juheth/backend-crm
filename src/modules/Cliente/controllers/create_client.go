@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	authEntities "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/auth"
 	r "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/response"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Cliente/domain/dto"
-	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Cliente/domain/entities"
+	clientEntities "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Cliente/domain/entities"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Cliente/usecases"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/Cliente/utils"
 	"github.com/gofiber/fiber/v2"
@@ -31,11 +32,21 @@ func (ct *CreateClientController) Run(c *fiber.Ctx) error {
 		return ct.result.Bad(c, err.Error())
 	}
 
-	client := &entities.Client{
+	claims, ok := c.Locals("claims").(*authEntities.Claims)
+	if !ok || claims == nil {
+		return ct.result.Error(c, "Error al obtener los claims del token")
+	}
+
+	userID := claims.ID
+	if userID <= 0 {
+		return ct.result.Bad(c, "El ID del usuario creador es obligatorio y debe ser numérico")
+	}
+
+	client := &clientEntities.Client{
 		Name:      req.Name,
 		Email:     req.Email,
 		Phone:     req.Phone,
-		CreatedBy: req.CreatedBy,
+		CreatedBy: userID,
 	}
 
 	if err := ct.usecase.Execute(client); err != nil {

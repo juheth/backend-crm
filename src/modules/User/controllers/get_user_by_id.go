@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	r "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/response"
+	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/domain/dto"
 	usecases "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/usecases"
 	"github.com/gofiber/fiber/v2"
 )
@@ -41,6 +42,14 @@ func (ph *GetUserByIdController) Run(c *fiber.Ctx) (err error) {
 		return err
 	}
 
-	ph.result.Ok(c, user)
+	userResponse := dto.UserResponse{
+		ID:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		Status:    user.Status,
+		CreatedAt: user.CreatedAt,
+	}
+
+	ph.result.Ok(c, userResponse)
 	return nil
 }

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	r "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/response"
+	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/domain/dto"
 	usecases "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/usecases"
 	"github.com/gofiber/fiber/v2"
 )
@@ -23,5 +24,17 @@ func (ph *GetAllUsersController) Run(c *fiber.Ctx) error {
 	if err != nil {
 		return ph.result.Error(c, err)
 	}
-	return ph.result.Ok(c, users)
+
+	var usersResponse []dto.UserResponse
+	for _, u := range users {
+		usersResponse = append(usersResponse, dto.UserResponse{
+			ID:        u.ID,
+			Name:      u.Name,
+			Email:     u.Email,
+			Status:    u.Status,
+			CreatedAt: u.CreatedAt,
+		})
+	}
+
+	return ph.result.Ok(c, usersResponse)
 }
