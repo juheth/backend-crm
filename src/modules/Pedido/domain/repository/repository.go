@@ -13,4 +13,5 @@ type OrderRepository interface {
 	DeleteOrder(orderID int) error
 	GetOrdersByClient(clientId int) ([]*entities.Order, error)
 	GetOrdersByStatus(status string) ([]*entities.Order, error)
+	GetOrderSummary() (totalPedidosMes int, ventasTotalesMes float64, ticketPromedio float64, porEstado map[string]int, err error)
 }

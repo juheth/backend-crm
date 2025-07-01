@@ -18,6 +18,7 @@ func configureModuleRoutes(
 	ctrlDeleteOrder *controllers.DeleteOrderController,
 	ctrlGetOrdersByClient *controllers.GetOrdersByClientController,
 	ctrlGetOrdersByStatus *controllers.GetOrdersByStatusController,
+	ctrlGetOrderSummary *controllers.GetOrderSummaryController,
 	h *types.HandlersStore,
 ) {
 	handlersModuleOrders := &types.SliceHandlers{
@@ -27,6 +28,12 @@ func configureModuleRoutes(
 				Route:        "get-all",
 				Method:       http.MethodGet,
 				Handler:      ctrlGetAllOrders.Run,
+				RequiresAuth: true,
+			},
+			{
+				Route:        "summary",
+				Method:       http.MethodGet,
+				Handler:      ctrlGetOrderSummary.Run,
 				RequiresAuth: true,
 			},
 			{
@@ -87,6 +94,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(controllers.NewGetOrdersByClientController),
 		fx.Provide(usecases.NewGetOrdersByStatus),
 		fx.Provide(controllers.NewGetOrdersByStatusController),
+		fx.Provide(usecases.NewGetOrderSummary),
+		fx.Provide(controllers.NewGetOrderSummaryController),
 		fx.Invoke(configureModuleRoutes),
 	}
 }
