@@ -6,6 +6,7 @@ import (
 	r "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/common/response"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/domain/entities"
 	usecases "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/usecases"
+	utils "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/utils" // Agrega este import
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -41,6 +42,14 @@ func (ph *UpdateUserController) Run(c *fiber.Ctx) error {
 	}
 	if user.Email == "" {
 		return ph.result.Bad(c, "El correo electrónico es obligatorio")
+	}
+
+	if user.Password != "" {
+		hashed, err := utils.HashPassword(user.Password)
+		if err != nil {
+			return ph.result.Bad(c, "Error al cifrar la contraseña")
+		}
+		user.Password = hashed
 	}
 
 	if err := ph.usecase.Execute(&user); err != nil {
