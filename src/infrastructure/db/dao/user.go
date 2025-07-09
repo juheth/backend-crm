@@ -1,6 +1,8 @@
 package infrastructure
 
 import (
+	"log"
+
 	db "dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/infrastructure/db/adapter"
 	"dev.azure.com/proyects-crm/CRM-ECOMMERS/_git/Backend-crm/src/modules/User/domain/entities"
 	"gorm.io/gorm"
@@ -43,8 +45,14 @@ func (dao *MySQLUserDao) UpdateUser(user *entities.User) error {
 
 func (dao *MySQLUserDao) FindByEmail(email string) (entities.User, error) {
 	var user entities.User
-	if err := dao.db.Where("email = ?", email).First(&user).Error; err != nil {
-		return entities.User{}, err
+	err := dao.db.Where("email = ?", email).First(&user).Error
+	return user, err
+}
+
+func (dao *MySQLUserDao) UpdateUserPasswordByEmail(email, hashedPassword string) error {
+	err := dao.db.Model(&entities.User{}).Where("email = ?", email).Update("password", hashedPassword).Error
+	if err == nil {
+		log.Printf("[INFO] Contraseña actualizada para %s", email)
 	}
-	return user, nil
+	return err
 }
