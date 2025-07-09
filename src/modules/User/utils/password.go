@@ -2,6 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
 	"unicode"
 
 	"golang.org/x/crypto/bcrypt"
@@ -39,14 +41,24 @@ func ValidatePassword(password string) error {
 		return fmt.Errorf("la contraseña debe tener al menos 8 caracteres")
 	}
 	if !hasUpper {
-		return fmt.Errorf("la contraseña debe contener al menos una letra mayúscula")
+		return fmt.Errorf("debe contener al menos una letra mayúscula")
 	}
 	if !hasNumber {
-		return fmt.Errorf("la contraseña debe contener al menos un número")
+		return fmt.Errorf("debe contener al menos un número")
 	}
 	if !hasSymbol {
-		return fmt.Errorf("la contraseña debe contener al menos un símbolo")
+		return fmt.Errorf("debe contener al menos un símbolo")
 	}
 
 	return nil
+}
+
+func GenerateSecurePassword(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()"
+	var seededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
+	password := make([]byte, length)
+	for i := range password {
+		password[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(password)
 }
