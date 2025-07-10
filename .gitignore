@@ -1,2 +1,4 @@
 .env
 .gitignore
+redirect_password.go
+templates

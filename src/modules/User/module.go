@@ -18,6 +18,7 @@ func configureModuleRoutes(
 	ctrlUpdateUser *controllers.UpdateUserController,
 	ctrlLoginUser *controllers.LoginUserController,
 	ctrlRefreshToken *controllers.RefreshTokenController,
+	ctrlSendPassword *controllers.SendPasswordController,
 
 	h *types.HandlersStore,
 ) {
@@ -59,6 +60,11 @@ func configureModuleRoutes(
 				Method:  http.MethodPost,
 				Handler: ctrlRefreshToken.Run,
 			},
+			{
+				Route:   "/send-password",
+				Method:  http.MethodPost,
+				Handler: ctrlSendPassword.Run,
+			},
 		},
 	}
 	h.Handlers = append(h.Handlers, *handlersModuleUsers)
@@ -77,6 +83,8 @@ func ModuleProviders() []fx.Option {
 		fx.Provide(usecases.NewUpdateUser),
 		fx.Provide(controllers.NewLoginUserController),
 		fx.Provide(usecases.NewLoginUser),
+		fx.Provide(controllers.NewSendPasswordController),
+		fx.Provide(usecases.NewSendPassword),
 		fx.Provide(controllers.NewRefreshTokenController),
 
 		fx.Invoke(configureModuleRoutes),
