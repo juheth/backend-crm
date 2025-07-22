@@ -22,10 +22,20 @@ func (r *Result) Ok(c *fiber.Ctx, data ...interface{}) error {
 }
 
 func (r *Result) Error(c *fiber.Ctx, data interface{}) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	var msg string
+
+	if err, ok := data.(error); ok {
+		msg = err.Error()
+	} else if s, ok := data.(string); ok {
+		msg = s
+	} else {
+		msg = "error desconocido"
+	}
+
+	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 		"isError": true,
 		"data":    struct{}{},
-		"message": data,
+		"message": msg,
 	})
 }
 

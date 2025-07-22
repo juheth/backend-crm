@@ -33,7 +33,7 @@ func SendEmail(send dto.SendEmail, data interface{}) error {
 	plainText := send.PlainText
 
 	// Parsear plantilla HTML
-	tmpl, err := template.ParseFiles("src/modules/User/utils/mailgun/templates/welcome_email.html")
+	tmpl, err := template.ParseFiles("src/modules/user/utils/mailgun/templates/welcome_email/welcome_email.html")
 	if err != nil {
 		return err
 	}
