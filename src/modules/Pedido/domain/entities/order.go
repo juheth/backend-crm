@@ -19,5 +19,5 @@ type OrderItem struct {
 	ProductID int     `json:"productId"`
 	Quantity  int     `json:"quantity"`
 	UnitPrice float64 `json:"unitPrice"`
-	Subtotal  float64 `json:"subtotal"`
+	Subtotal  float64 `json:"subtotal" gorm:"->"`
 }

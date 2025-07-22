@@ -19,12 +19,12 @@ func NewCreateProduct(repo *dao.MySQLProductDao) *CreateProduct {
 	return &CreateProduct{repo: repo}
 }
 
-func (uc *CreateProduct) Execute(Request dto.CreateProductRequest) (*dto.ProductResponse, error) {
-	if err := utils.ValidateCreateProduct(Request); err != nil {
+func (uc *CreateProduct) Execute(request dto.CreateProductRequest) (*dto.ProductResponse, error) {
+	if err := utils.ValidateCreateProduct(request); err != nil {
 		return nil, err
 	}
 
-	exists, err := uc.repo.ExistsByName(Request.Name)
+	exists, err := uc.repo.ExistsByName(request.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -32,17 +32,21 @@ func (uc *CreateProduct) Execute(Request dto.CreateProductRequest) (*dto.Product
 		return nil, errors.New("ya existe un producto con ese nombre")
 	}
 
+	statusBool, err := utils.ParseStatus(request.Status)
+	if err != nil {
+		return nil, err
+	}
+
 	product := &entities.Product{
-		Name:        Request.Name,
-		Description: Request.Description,
-		Price:       Request.Price,
-		Stock:       Request.Stock,
-		Status:      true,
+		Name:        request.Name,
+		Description: request.Description,
+		Price:       request.Price,
+		Stock:       request.Stock,
+		Status:      statusBool,
 		CreatedAt:   time.Now(),
 	}
 
-	err = uc.repo.Create(product)
-	if err != nil {
+	if err := uc.repo.Create(product); err != nil {
 		return nil, err
 	}
 
