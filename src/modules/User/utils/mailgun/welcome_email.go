@@ -10,7 +10,7 @@ func WelcomeEmail(password, email string) error {
 		Subject:   "Bienvenido a Nexcol",
 		Recipient: email,
 		PlainText: "Bienvenido!",
-		Template:  "src/modules/user/utils/mailgun/templates/welcome_email.html",
+		Template:  "src/modules/user/utils/mailgun/templates/welcome_email/welcome_email.html",
 	}
 
 	data := map[string]interface{}{

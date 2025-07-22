@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="login-container">
+    <form class="login-form" id="loginForm">
+      <h2>Iniciar Sesión</h2>
+      
+      <div id="errorMessage" class="error-message"></div>
+
+      <div class="input-group">
+        <i class="fas fa-envelope icon"></i>
+        <input type="email" id="email" name="email" placeholder="Email" required />
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-lock icon"></i>
+        <input type="password" id="password" name="password" placeholder="Contraseña" required />
+      </div>
+
+      <button type="submit" id="loginButton">
+        <span id="buttonText">Ingresar</span>
+        <span id="buttonLoader" class="loading" style="display: none;"></span>
+      </button>
+
+      <p class="signup-link">¿No tienes cuenta? <a href="#">Regístrate</a></p>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorElement = document.getElementById('errorMessage');
+      const buttonText = document.getElementById('buttonText');
+      const buttonLoader = document.getElementById('buttonLoader');
+      
+      // Mostrar loader
+      buttonText.textContent = 'Procesando...';
+      buttonLoader.style.display = 'inline-block';
+      errorElement.style.display = 'none';
+      
+      try {
+        const response = await fetch('http://localhost:3005/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.message || 'Error en el servidor');
+        }
+        
+        if (data.isError) {
+          errorElement.textContent = data.message;
+          errorElement.style.display = 'block';
+        } else {
+          // Login exitoso - redirigir o guardar token
+          window.location.href = '/dashboard.html';
+        }
+      } catch (error) {
+        errorElement.textContent = error.message || 'Error al conectar con el servidor';
+        errorElement.style.display = 'block';
+        console.error('Error:', error);
+      } finally {
+        // Restaurar botón
+        buttonText.textContent = 'Ingresar';
+        buttonLoader.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html> 
