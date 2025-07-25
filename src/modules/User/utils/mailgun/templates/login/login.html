@@ -65,13 +65,20 @@
           throw new Error(data.message || 'Error en el servidor');
         }
         
-        if (data.isError) {
+       if (data.isError) {
           errorElement.textContent = data.message;
           errorElement.style.display = 'block';
         } else {
-          // Login exitoso - redirigir o guardar token
-          window.location.href = '/dashboard.html';
+ 
+        if (data.data && data.data.token) {
+            localStorage.setItem("token", data.data.token);
+            window.location.href = '/src/modules/Pedido/utils/dashboard/dashboard.html';
+        } else {
+            errorElement.textContent = "Token no recibido del servidor.";
+            errorElement.style.display = 'block';
         }
+}
+
       } catch (error) {
         errorElement.textContent = error.message || 'Error al conectar con el servidor';
         errorElement.style.display = 'block';
