@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard de Pedidos</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: 'Inter', sans-serif;
+      background: #f4f7fa;
+      color: #2e3a59;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 50px;
+      color: #1e293b;
+      user-select: none;
+      text-align: center;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 28px;
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px 28px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      flex: 1 1 280px;
+      min-width: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+      fill: #3b82f6; /* Azul vivo */
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 14px;
+      text-align: center;
+      text-transform: capitalize;
+    }
+
+    .card-value {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #2563eb;
+      line-height: 1.1;
+      user-select: none;
+      min-height: 50px;
+    }
+
+    .error-message {
+      margin-top: 40px;
+      font-weight: 600;
+      color: #ef4444; /* rojo intenso */
+      font-size: 1.4rem;
+      user-select: none;
+      text-align: center;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 20px 10px;
+      }
+      h1 {
+        font-size: 1.9rem;
+        margin-bottom: 30px;
+      }
+      .card-value {
+        font-size: 2.4rem;
+      }
+      .card {
+        padding: 22px 20px;
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Resumen de Pedidos del Mes</h1>
+
+  <div class="dashboard" id="dashboard"></div>
+
+  <script>
+    // Función para animar conteo desde 0 hasta valor final
+    function animateCount(element, endValue, duration = 1500) {
+      let start = 0;
+      const range = endValue;
+      const stepTime = Math.abs(Math.floor(duration / range));
+      let startTime = null;
+
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = timestamp - startTime;
+        let current = Math.min(Math.floor((progress / duration) * range), range);
+        element.textContent = typeof endValue === 'number' && endValue >= 1000
+          ? current.toLocaleString()
+          : current;
+        if (progress < duration) {
+          requestAnimationFrame(step);
+        } else {
+          // asegurar valor final exacto
+          element.textContent = typeof endValue === 'number' && endValue >= 1000
+            ? endValue.toLocaleString()
+            : endValue;
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    const token = localStorage.getItem("token");
+    const dashboard = document.getElementById("dashboard");
+
+    // Iconos SVG para cada tipo de card
+    const icons = {
+      pedidos: `<svg class="icon" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 8h12v-2H7v2zm0-4h12v-2H7v2zm0-6v2h12V7H7z"/></svg>`,
+      ventas: `<svg class="icon" viewBox="0 0 24 24"><path d="M12 2L3 7v7c0 3 4 6 9 6s9-3 9-6V7l-9-5zm0 15c-3 0-6-1-6-3V9.9l6 3.5 6-3.5v4.1c0 2-3 3-6 3z"/></svg>`,
+      ticket: `<svg class="icon" viewBox="0 0 24 24"><path d="M4 7v10h16V7H4zm10 7h-4v-2h4v2zm3-7H7v2h10V7z"/></svg>`,
+      estado: `<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#3b82f6" stroke-width="2" fill="none"/><path d="M8 12l3 3 5-5" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    };
+
+    if (!token) {
+      dashboard.innerHTML = `<p class="error-message">No hay token de autenticación. Inicia sesión primero.</p>`;
+    } else {
+      fetch("http://localhost:3005/orders/summary", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+      .then(res => res.json())
+      .then(json => {
+        if (json.isError || !json.data) {
+          throw new Error(json.message || "Error al obtener el resumen");
+        }
+
+        const data = json.data;
+
+        // Construimos cards
+        dashboard.innerHTML = `
+          <div class="card">
+            ${icons.pedidos}
+            <div class="card-title">Total de Pedidos</div>
+            <div class="card-value" id="totalPedidosMes">0</div>
+          </div>
+          <div class="card">
+            ${icons.ventas}
+            <div class="card-title">Ventas Totales</div>
+            <div class="card-value" id="ventasTotalesMes">0</div>
+          </div>
+          <div class="card">
+            ${icons.ticket}
+            <div class="card-title">Ticket Promedio</div>
+            <div class="card-value" id="ticketPromedio">0</div>
+          </div>
+        `;
+
+        // Insertar cards por estado
+        for (const estado in data.porEstado) {
+          dashboard.innerHTML += `
+            <div class="card">
+              ${icons.estado}
+              <div class="card-title">Pedidos ${estado}</div>
+              <div class="card-value" id="estado-${estado}">0</div>
+            </div>
+          `;
+        }
+
+        // Animar números
+        animateCount(document.getElementById('totalPedidosMes'), data.totalPedidosMes);
+        animateCount(document.getElementById('ventasTotalesMes'), data.ventasTotalesMes);
+        animateCount(document.getElementById('ticketPromedio'), data.ticketPromedio);
+
+        for (const estado in data.porEstado) {
+          animateCount(document.getElementById(`estado-${estado}`), data.porEstado[estado]);
+        }
+      })
+      .catch(err => {
+        dashboard.innerHTML = `<p class="error-message">Error: ${err.message}</p>`;
+      });
+    }
+  </script>
+
+</body>
+</html>
